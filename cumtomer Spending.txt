@@ -1,14 +1,8 @@
------ cumtomer Spending
-
-SELECT
-     c.customer_name, ROUND(SUM(i.total_price), 6)
-FROM 
-     customer c
-INNER JOIN
-     invoice i ON c.id=i.customer_id
-GROUP BY
-     c.customer_name
-HAVING 
-     SUM(i.total_price)<0.25*(SELECT AVG(total_price) FROM invoice)
-ORDER BY
-      ROUND(SUM(i.total_price), 6) DESC;
+SELECT 
+    c.customer_name, 
+    CAST(SUM(i.total_price) AS DECIMAL(18,6)) AS amount_spent
+FROM customer c
+JOIN invoice i ON c.id = i.customer_id
+GROUP BY c.customer_name
+HAVING SUM(i.total_price) <= 0.25 * (SELECT AVG(total_price) FROM invoice)
+ORDER BY amount_spent DESC;
